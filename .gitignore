@@ -1,3 +1,10 @@
+/downloads/*
+/src/module/browser/default
+/spam.js
+/config2.json
+*.sqlite
+/index2.js
+
 # Logs
 logs
 *.log

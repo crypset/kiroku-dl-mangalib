@@ -1,0 +1,520 @@
+{
+  "app": {
+    "downloadDir": "downloads"
+  },
+  "browser": {
+    "headless": true,
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "timeout": 30000,
+    "args": [
+      "--disable-blink-features=AutomationControlled",
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-infobars",
+      "--disable-extensions",
+      "--disable-dev-shm-usage"
+    ]
+  },
+  "api": {},
+  "download": {
+    "delay": 4000,
+    "pageDelay": 4000,
+    "searchDelay": 6000,
+    "maxConcurrent": 1,
+    "skipErrors": true,
+    "skipDownloaded": true,
+    "useDatabase": true
+  },
+  "database": {
+    "enabled": true,
+    "sync": true
+  },
+  "comments": {
+    "useDatabase": "Whether to use the database to track downloaded images"
+  },
+  "searches": [
+    {
+      "name": "Gyaru Gamer Homeraretai",
+      "url": "https://mangalib.me/ru/manga/59071--gyarugema-ni-home-raretai?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Nyanta and Pomeko",
+      "url": "https://mangalib.me/ru/manga/99238--nyanta-and-pomeko?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Oshi no Ko",
+      "url": "https://mangalib.me/ru/manga/29759--oshi-no-ko?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kyokou Suiri",
+      "url": "https://mangalib.me/ru/manga/777--kyokou-suiri?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Meguro-san wa Hajimete ja Nai",
+      "url": "https://mangalib.me/ru/manga/9356--bukan-kali-pertamanya-mbak-meguro?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kaijuu 8-gou",
+      "url": "https://mangalib.me/ru/manga/39470--8kaijuu?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Sono Bisque Doll wa Koi wo Suru",
+      "url": "https://mangalib.me/ru/manga/8748--sono-bisque-doll-wa-koi-wo-suru?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Horimiya",
+      "url": "https://mangalib.me/ru/manga/701--horimiya?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "ReLIFE",
+      "url": "https://mangalib.me/ru/manga/1284--relife?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "1-Nichi-goto ni tsun ga hette ku tsuntsuntsuntsuntsuntsuntsuntsuntsuntsuntsundere joshi",
+      "url": "https://mangalib.me/ru/manga/135514--1-nichi-goto-ni-tsun-ga-hette-ku-tsuntsuntsuntsuntsuntsuntsuntsuntsuntsuntsundere-joshi?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Go-Toubun no Hanayome",
+      "url": "https://mangalib.me/ru/manga/4436--the-five-wedded-brides?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kawaii Dake Janai Onnanoko",
+      "url": "https://mangalib.me/ru/manga/8656--kawai-dake-janai-onnanoko?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kubo-san wa Boku (Mobu) wo Yurusanai",
+      "url": "https://mangalib.me/ru/manga/17772--kubo-san-wa-boku-mobu-wo-yurusanai?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Ichizu de Bitch na Kouhai",
+      "url": "https://mangalib.me/ru/manga/15889--ichizu-de-bitch-na-kouhai?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Ochikazuki girl",
+      "url": "https://mangalib.me/ru/manga/104202--ochikazuki-girl?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Saikin Yatotta Maid ga Ayashii",
+      "url": "https://mangalib.me/ru/manga/17878--my-recently-hired-maid-is-suspicious?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kou 2 ni Time Leaped Shita Ore ga, Touji suki Datta Sensei ni Kokutta Kekka",
+      "url": "https://mangalib.me/ru/manga/11260--kou-2-ni-time-leaped-shita-ore-ga-touji-suki-datta-sensei-ni-kokutta-kekka?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Karakai Jouzu no Takagi-san",
+      "url": "https://mangalib.me/ru/manga/3777--karakai-jouzu-no-takagi-san?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Shin no Nakama Janai to Yuusha no Party wo Oidasareta no de, Henkyou de Slow Life suru koto ni shimashita",
+      "url": "https://mangalib.me/ru/manga/8022--shin-no-nakama-janai-to-yuusha-no-party-wo-oidasareta-node-henkyou-de-slow-life-suru-koto-ni-shimashita?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Iya na Kao Sarenagara Opantsu Misete moraitai: Yo wa Pantsu ga Mitai zo",
+      "url": "https://mangalib.me/ru/manga/14364--iya-na-kao-sarenagara-opantsu-misete-moraitai-yo-wa-pantsu-ga-mitai-zo?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Seishun Buta Yarou wa Bunny Girl-Senpai no Yume o Minai",
+      "url": "https://mangalib.me/ru/manga/1328--seishun-buta-yarou-wa-bunny-girl-senpai-no-yume-o-minai?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Soredemo Ayumu wa Yosetekuru",
+      "url": "https://mangalib.me/ru/manga/10258--still-my-steps-will-come?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Amagami-san Chi no Enmusubi",
+      "url": "https://mangalib.me/ru/manga/58392--amagami-san-chi-no-enmusubi-serial?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Osananajimi Ni Najimitai",
+      "url": "https://mangalib.me/ru/manga/4185--osananajimi-ni-najimitai?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Dosanko Gyaru wa Namaramenkoi",
+      "url": "https://mangalib.me/ru/manga/9664--dosanko-gyaru-is-mega-cute?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Hige Wo Soru. Soshite Joshikosei Wo Hirou",
+      "url": "https://mangalib.me/ru/manga/7879--hige-wo-soru-soshite-joshikosei-wo-hirou?section=chapters",
+      "skipDownloaded": true,
+      "translating": "not completed"
+    },
+    {
+      "name": "Shukatsu Shippai Shita Succubus-San O Hiroimashita",
+      "url": "https://mangalib.me/ru/manga/18140--shukatsu-shippai-shita-succubus-san-o-hiroimashita?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kumanishi Bijutsu-Bu - Rafusuke Senpai",
+      "url": "https://mangalib.me/ru/manga/4425--kumanishi-bijutsu-bu-rafusuke-senpai?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Shishidou-san ni Shikararetai",
+      "url": "https://mangalib.me/ru/manga/41532--shishidou-san-ni-shikararetai?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Yozakura-san Chi no Daisakusen",
+      "url": "https://mangalib.me/ru/manga/15891--yozakura-san-chi-no-daisakusen?section=chapters",
+      "skipDownloaded": true,
+      "translating": "not completed"
+    },
+    {
+      "name": "Imouto no Tomodachi ga Nani Kangaeteru no ka Wakaranai!",
+      "url": "https://mangalib.me/ru/manga/30791--imouto-no-tomodachi-ga-nani-kangaeteru-no-ka-wakaranai?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Tonari no Furi-san ga Tonikaku Kowai",
+      "url": "https://mangalib.me/ru/manga/9182--tonari-no-furi-san-ga-tonikaku-kowai?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Yahari Ore no Seishun Rabukome wa Machigatte Iru. - Mougenroku",
+      "url": "https://mangalib.me/ru/manga/5429--my-youth-romanjic-comedy-ls-wrong-as-l-expected?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Yahari Ore no Seishun Rabukome wa Machigatte Iru - Comic",
+      "url": "https://mangalib.me/ru/manga/59104--yahari-ore-no-seishun-rabukome-wa-machigatte-iru-at-comic?section=chapters",
+      "skipDownloaded": true,
+      "translating": "not completed"
+    },
+    {
+      "name": "Girl That Can See It",
+      "url": "https://mangalib.me/ru/manga/6793--girl-that-can-see-it?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Charlotte",
+      "url": "https://mangalib.org/ru/manga/20208--charlotte-maeda-jun?from=catalog&section=chapters",
+      "skipDownloaded": true,
+      "translating": "not completed"
+    },
+    {
+      "name": "Tokubetsu ni naritai.",
+      "url": "https://mangalib.org/ru/manga/12381--tokubetsu-ni-naritai?from=catalog",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Otaku-kun to Gal ga Koi o Suru Hanashi",
+      "url": "https://mangalib.org/ru/manga/34478--the-story-of-an-otaku-and-a-gyaru-fall-in-love?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Ore wo Suki Nano wa Omae Dake ka yo",
+      "url": "https://mangalib.org/ru/manga/6076--ore-wo-suki-nano-wa-omae-dake-ka-yo?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Sakurai-san wa Kizuite Hoshii",
+      "url": "https://mangalib.org/ru/manga/19219--sakurai-san-wa-kizuite-hoshii?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Suki ni Naranai yo, Senpai",
+      "url": "https://mangalib.org/ru/manga/4027--suki-ni-naranai-yo-senpai?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Metsuki Warui Ko Kawaii Ko",
+      "url": "https://mangalib.org/ru/manga/111769--me-tsuki-warui-ko-kawaii-ko?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kimi janakya Dame na Dorei Shoujo",
+      "url": "https://mangalib.org/ru/manga/122810--kimi-janakya-dame-na-dorei-shoujo?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Hayaku Shitai Futari",
+      "url": "https://mangalib.org/ru/manga/44810--hayaku-shitai-futari?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Mabarai-san wa Boku wo Karitai",
+      "url": "https://mangalib.org/ru/manga/103383--mabarai-san-wa-boku-wo-karitai?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Rakudai Kishi no Eiyuutan",
+      "url": "https://mangalib.org/ru/manga/3802--rakudai-kishi-no-eiyuutan?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Asahina Wakaba to Marumaru na kareshi",
+      "url": "https://mangalib.org/ru/manga/27343--asahina-wakaba-to-na-kareshi?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Shijou Saikyou no Daimaou, Murabito A ni Tensei suru",
+      "url": "https://mangalib.org/ru/manga/32044--shijou-saikyou-no-daimaou-murabito-a-ni-tensei-suru?from=catalog&section=chapters",
+      "skipDownloaded": true,
+      "translating": "not completed"
+    },
+    {
+      "name": "Kimi wa Shinenai Hai Kaburi no Majo",
+      "url": "https://mangalib.org/ru/manga/48604--kimi-wa-shinenai-hai-kaburi-no-majo?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Ihoujin, Dungeon ni Moguru",
+      "url": "https://mangalib.org/ru/manga/16958--ihoujin-dungeon-ni-moguru?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Okorippoi Gyaru wo Deeto ni Sasotte Mita",
+      "url": "https://mangalib.org/ru/manga/149691--okorippoi-gyaru-wo-deeto-ni-sasotte-mita?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Musume no Tomodachi",
+      "url": "https://mangalib.org/ru/manga/17035--musume-no-tomodachi?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Tights de Iyashite Kureru Yome",
+      "url": "https://mangalib.org/ru/manga/18594--tights-de-iyashite-kureru-yome?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kokuhaku Series",
+      "url": "https://mangalib.org/ru/manga/66652--kokuhaku-series?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Eiga Koe no Katachi Special Book",
+      "url": "https://mangalib.org/ru/manga/23335--eiga-koe-no-katachi-special-book?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Siscon Ani to Brocon Imouto ga Fuufu ni Nattara Shiawase Sugite Bakuhatsushisou",
+      "url": "https://mangalib.org/ru/manga/61791--siscon-ani-to-brocon-imouto-ga-fuufu-ni-nattara-shiawase-sugite-bakuhatsushisou?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Ano Ko no, Toriko",
+      "url": "https://mangalib.org/ru/manga/2178--ano-ko-no-toriko?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kanojo ga Senpai ni NTR-reta no de, Senpai no Kanojo wo NTR-masu",
+      "url": "https://mangalib.org/ru/manga/100583--kanojo-ga-senpai-ni-ntr-reta-no-de-senpai-no-kanojo-wo-ntr-masu?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kanojo ni Uwaki Sareteita Ore ga, Koakuma na Kouhai ni Natsukareteimasu",
+      "url": "https://mangalib.org/ru/manga/125138--kanojo-ni-uwaki-sareteita-ore-ga-koakuma-na-kouhai-ni-natsukareteimasu?section=chapters",
+      "skipDownloaded": true,
+      "translating": "not completed"
+    },
+    {
+      "name": "Yandere Kanojo ni Nemura Sete Moraenai",
+      "url": "https://mangalib.org/ru/manga/49483--yandere-kanojo-ni-nemura-sete-moraenai?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Tonari no Seki ni Natta Bishoujo ga Horesaseyou to Karakatte Kuru ga Itsunomanika Kaeriuchi ni Shite Ita",
+      "url": "https://mangalib.org/ru/manga/30488--tonari-no-seki-ni-natta-bishoujo-ga-horesaseyou-to-karakatte-kuru-ga-itsunomanika-kaeriuchi-ni-shite-ita?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Koi Shita no de, Haishin Shite Mita",
+      "url": "https://mangalib.org/ru/manga/17603--koi-shita-no-de-haishin-shite-mita?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Tokidoki Bosotto Roshiago de Dereru Tonari no Alya-san",
+      "url": "https://mangalib.org/ru/manga/66481--alya-who-sits-next-to-me-sometimes-whispers-sweet-nothings-in-russian?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Mii-chan wa Kawaretai",
+      "url": "https://mangalib.org/ru/manga/164469--mii-chan-wa-kawaretai?from=catalog&section=chapters",
+      "skipDownloaded": true,
+      "translating": "not completed"
+    },
+    {
+      "name": "Arigatights",
+      "url": "https://mangalib.org/ru/manga/12183--arigatights?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kisaragi-san wa Gankoukeikei",
+      "url": "https://mangalib.org/ru/manga/101711--kisaragi-san-wa-gankoukeikei?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "kizu darake seijo yori hōfuku wo kome te",
+      "url": "https://mangalib.org/ru/manga/138276--kizu-darake-seijo-yori-hofuku-wo-kome-te?from=catalog&section=chapters",
+      "skipDownloaded": true,
+      "translating": "not completed"
+    },
+    {
+      "name": "Tokidoki Bosotto Roshiago de Dereru Tonari no Alya-san",
+      "url": "https://mangalib.org/ru/manga/135504--tokidoki-bosotto-roshiago-de-dereru-tonari-no-alya-san-tenacity-saho?from=catalog&section=chapters",
+      "skipDownloaded": true,
+      "translating": "not completed"
+    },
+    {
+      "name": "Futari no ittōsei",
+      "url": "https://mangalib.org/ru/manga/127471--futari-no-ittosei?from=catalog&section=chapters",
+      "skipDownloaded": true,
+      "translating": "not completed"
+    },
+    {
+      "name": "Zutto Otokonoko da to Omotte ita Gakitaishou ga Onnanoko deshita",
+      "url": "https://mangalib.org/ru/manga/27329--zutto-otokonoko-da-to-omotte-ita-gakitaishou-ga-onnanoko-deshita?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Koe no Chiisai Komori-san to Kuso Deka Oogoe no Oobayashi-kun",
+      "url": "https://mangalib.org/ru/manga/30784--koe-no-chiisai-komori-san-to-kuso-deka-oogoe-no-oobayashi-kun?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Tobioriyou to Shiteiru Joshikousei wo Tasuketara Dou Naru no Ka?",
+      "url": "https://mangalib.org/ru/manga/101039--tobioriyou-to-shiteiru-joshikousei-wo-tasuketara-dou-naru-no-ka?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Sekimen Shinaide Sekime-san",
+      "url": "https://mangalib.org/ru/manga/58695--sekimen-shinaide-sekime-san?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Suzumiya Haruhi no Yuutsu",
+      "url": "https://mangalib.org/ru/manga/321--suzumiya-haruhi-no-yuutsu?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Mahouka Koukou no Rettousei: Nyuugaku Hen",
+      "url": "https://mangalib.org/ru/manga/2036--mahouka-koukou-no-rettousei?from=catalog",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Nijuukyuu to Jeikei",
+      "url": "https://mangalib.org/ru/manga/6338--29-to-jk?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Dagashi Kashi",
+      "url": "https://mangalib.org/ru/manga/3769--dagashi-kashi?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Boku Yori Medatsu Na RyuGakusei",
+      "url": "https://mangalib.org/ru/manga/58294--boku-yori-medatsu-na-ryugakusei?from=catalog",
+      "skipDownloaded": true,
+      "translating": "abandoned"
+    },
+    {
+      "name": "Ane no Yuujin (TAKASE Waka)",
+      "url": "https://mangalib.org/ru/manga/171333--my-older-sisters-friend?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Nikaidou Kou Tanpenshuu: Arigatou tte Itte",
+      "url": "https://mangalib.org/ru/manga/44501--nikaidou-kou-tanpenshuu-arigatou-tte-itte?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Ojousama no Shimobe",
+      "url": "https://mangalib.org/ru/manga/6848--ojousama-no-shimobe?from=catalog&section=chapters",
+      "skipDownloaded": true,
+      "translating": "ongoing"
+    },
+    {
+      "name": "Inkya Datta Ore no Seishun Revenge - Tenshi sugiru Ano Ko wa Ayumu Re Life",
+      "url": "https://mangalib.org/ru/manga/151129--inkya-datta?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "The Mieruko-chan Official Anthology Comic",
+      "url": "https://mangalib.org/ru/manga/101682--the-mieruko-chan-official-anthology-comic?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Mieruko-chan",
+      "url": "https://mangalib.org/ru/manga/12123--mieru-ko-chan?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kaiju No. 8 side B",
+      "url": "https://mangalib.org/ru/manga/188737--kaiju-no-8-side-b?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Doukyuusei ga kamieshi datta ken",
+      "url": "https://mangalib.org/ru/manga/20297--doukyuusei-ga-kamieshi-datta-ken?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Yuujin ni 500 Yen Kashitara Shakkin no Kata ni Imouto wo Yokoshitekita no Dakeredo, Ore wa Ittai Dou Sureba Iin Darou",
+      "url": "https://mangalib.org/ru/manga/103965--kogda-ya-odolzil-drugu-500-ien-ya-otdal-svoyu-sestru-v-dolg-kata-no-cto-mne-delat?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Kimi wa Yakamashi Tojite yo Kuchi wo!",
+      "url": "https://mangalib.org/ru/manga/129041--kimi-wa-yakamashi-tojite-yo-kuchi-wo?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Boku wa Konyaku Haki Nante Shimasenkara ne",
+      "url": "https://mangalib.org/ru/manga/59238--boku-wa-konyaku-haki-nante-shimasenkara-ne?from=catalog&section=chapters",
+      "skipDownloaded": true,
+      "translating": "ongoing"
+    },
+    {
+      "name": "Kimi wa Tsukiyo ni Hikari Kagayaku",
+      "url": "https://mangalib.org/ru/manga/39840--kimi-wa-tsukiyo-ni-hikari-kagayaku?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Nagisa no Shark Maid",
+      "url": "https://mangalib.org/ru/manga/160540--nagisa-no-shark-maid?from=catalog&section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Boku wa Ayashii Kimi no Mono",
+      "url": "https://mangalib.org/ru/manga/143006--boku-wa-ayashii-kimi-no-mono?from=catalog&section=chapters",
+      "skipDownloaded": true,
+      "translating": "ongoing"
+    },
+    {
+      "name": "Nanai Sanami ga Kiratte Kurenai",
+      "url": "https://mangalib.org/ru/manga/3079--nanai-sanami-ga-kiratte-kurenai?from=catalog&section=chapters",
+      "skipDownloaded": true
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "kiroku-dl-mangalib",
+  "version": "1.0.0",
+  "description": "Simple mangalib downloader",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-sora:crypset/kiroku-dl-mangalib.git"
+  },
+  "keywords": [
+    "kiroku",
+    "mangalib",
+    "downloader"
+  ],
+  "author": "Seth The White (crypset)",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "dotenv": "^17.2.2",
+    "gradient-string": "^3.0.0",
+    "playwright": "^1.55.1",
+    "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.3",
+    "sqlite3": "^5.1.7"
+  }
+}

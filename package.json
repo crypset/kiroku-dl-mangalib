@@ -1,6 +1,6 @@
 {
   "name": "kiroku-dl-mangalib",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Simple mangalib downloader",
   "main": "index.js",
   "type": "module",
@@ -15,6 +15,8 @@
   "keywords": [
     "kiroku",
     "mangalib",
+    "mangalib.me",
+    "mangalib.org",
     "downloader"
   ],
   "author": "Seth The White (crypset)",

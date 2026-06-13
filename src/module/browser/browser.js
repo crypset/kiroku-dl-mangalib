@@ -16,7 +16,7 @@ const __dirname = dirname(__filename);
 
 export async function init(profile, headless = true) {
   try {
-    const sessionFolderPath = join(__dirname, profile, "session");
+    const sessionFolderPath = join(__dirname, "../../../data", profile, "session");
 
     if (!fs.existsSync(sessionFolderPath)) {
       fs.mkdirSync(sessionFolderPath, { recursive: true });

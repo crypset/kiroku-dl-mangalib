@@ -7,8 +7,8 @@ export class MangalibAPI {
   constructor(context) {
     this.context = context;
     this.baseDownloadPath = path.join(process.cwd(), DOWNLOAD_DIR);
-    this.maxRetries = 3; // Максимальна кількість спроб
-    this.retryDelay = 2000; // Затримка між спробами (мс)
+    this.maxRetries = 3;
+    this.retryDelay = 2000;
   }
 
   async getChaptersList(url) {
@@ -84,13 +84,38 @@ export class MangalibAPI {
         chapterName
       );
 
+      let successfulDownloads = 0;
+      let skippedPages = [];
+
       for (let pageNum = 1; pageNum <= total; pageNum++) {
-        await this.downloadPageWithRetry(page, chapterUrl, chapterDir, pageNum);
-        await sleep(1000);
+        const isLastPage = pageNum === total;
+        const downloaded = await this.downloadPageWithRetry(
+          page,
+          chapterUrl,
+          chapterDir,
+          pageNum,
+          isLastPage
+        );
+
+        if (downloaded) {
+          successfulDownloads++;
+        } else {
+          skippedPages.push(pageNum);
+        }
+
+        await sleep(200);
       }
 
-      print(`Chapter ${chapterName} downloaded successfully`, "success");
-      return total;
+      if (skippedPages.length > 0) {
+        print(
+          `Chapter ${chapterName} completed with ${skippedPages.length} skipped page(s): ${skippedPages.join(", ")}`,
+          "warning"
+        );
+      } else {
+        print(`Chapter ${chapterName} downloaded successfully`, "success");
+      }
+
+      return successfulDownloads;
     } catch (error) {
       print(`downloadChapter: ${error.message}`, "error");
       throw error;
@@ -109,16 +134,16 @@ export class MangalibAPI {
     return total;
   }
 
-  async downloadPageWithRetry(page, chapterUrl, chapterDir, pageNum) {
+  async downloadPageWithRetry(page, chapterUrl, chapterDir, pageNum, isLastPage = false) {
     let lastError = null;
 
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
         await this.downloadPage(page, chapterUrl, chapterDir, pageNum);
-        return; // Успішно завантажено
+        return true; // Успішно завантажено
       } catch (error) {
         lastError = error;
-        
+
         if (attempt < this.maxRetries) {
           print(
             `Page ${pageNum} failed (attempt ${attempt}/${this.maxRetries}), retrying...`,
@@ -126,16 +151,26 @@ export class MangalibAPI {
           );
           await sleep(this.retryDelay);
         } else {
-          print(
-            `Page ${pageNum} failed after ${this.maxRetries} attempts`,
-            "error"
-          );
+          // Досягнуто максимальної кількості спроб
+          if (isLastPage) {
+            print(
+              `Page ${pageNum} (last page) failed after ${this.maxRetries} attempts. Skipping and continuing...`,
+              "warning"
+            );
+            return false; // Пропускаємо останню сторінку
+          } else {
+            print(
+              `Page ${pageNum} failed after ${this.maxRetries} attempts`,
+              "error"
+            );
+            throw lastError; // Викидаємо помилку для не-останніх сторінок
+          }
         }
       }
     }
 
-    // Якщо всі спроби провалились
-    throw lastError;
+    // Цей код досягається тільки для останньої сторінки
+    return false;
   }
 
   async downloadPage(page, chapterUrl, chapterDir, pageNum) {
@@ -147,18 +182,18 @@ export class MangalibAPI {
         timeout: 30000,
       });
 
-      // Додаємо очікування мережевого спокою
+      // Очікування мережевого спокою
       await page.waitForLoadState("networkidle", { timeout: 10000 }).catch(() => {
         // Ігноруємо помилку, продовжуємо
       });
 
       const imageQuery = `div[data-page="${pageNum}"] > img`;
-      
+
       // Спочатку чекаємо на елемент
       await page.waitForSelector(imageQuery, { timeout: 30000 });
-      
+
       // Потім чекаємо поки картинка завантажиться
-      await page.waitForFunction(
+      const imageLoaded = await page.waitForFunction(
         (selector) => {
           const img = document.querySelector(selector);
           return img && img.complete && img.naturalHeight > 0;
@@ -167,7 +202,16 @@ export class MangalibAPI {
         { timeout: 30000 }
       );
 
+      if (!imageLoaded) {
+        throw new Error(`Image element found but failed to load for page ${pageNum}`);
+      }
+
       const imageUrl = await page.$eval(imageQuery, (img) => img.src);
+
+      if (!imageUrl || imageUrl === '') {
+        throw new Error(`Empty image URL for page ${pageNum}`);
+      }
+
       await this.downloadImage(page, imageUrl, chapterDir, pageNum);
     } catch (error) {
       print(`downloadPage ${pageNum}: ${error.message}`, "error");
@@ -179,7 +223,16 @@ export class MangalibAPI {
     try {
       const imageData = await page.evaluate(async (url) => {
         const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const blob = await response.blob();
+
+        if (blob.size === 0) {
+          throw new Error('Empty image blob received');
+        }
 
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
@@ -191,6 +244,10 @@ export class MangalibAPI {
 
       const base64Data = imageData.split(",")[1];
       const buffer = Buffer.from(base64Data, "base64");
+
+      if (buffer.length === 0) {
+        throw new Error('Empty buffer after base64 decode');
+      }
 
       const ext = path.extname(new URL(imageUrl).pathname) || ".jpg";
       const fileName = `page_${pageNum.toString().padStart(3, "0")}${ext}`;

@@ -1,0 +1,51 @@
+{
+  "app": {
+    "downloadDir": "downloads"
+  },
+  "browser": {
+    "headless": true,
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "timeout": 30000,
+    "args": [
+      "--disable-blink-features=AutomationControlled",
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-infobars",
+      "--disable-extensions",
+      "--disable-dev-shm-usage"
+    ]
+  },
+  "api": {},
+  "download": {
+    "delay": 4000,
+    "pageDelay": 4000,
+    "searchDelay": 6000,
+    "maxConcurrent": 1,
+    "skipErrors": true,
+    "skipDownloaded": true,
+    "useDatabase": true
+  },
+  "database": {
+    "enabled": true,
+    "sync": true
+  },
+  "comments": {
+    "useDatabase": "Whether to use the database to track downloaded images"
+  },
+  "searches": [
+    {
+      "name": "Gyaru Gamer Homeraretai",
+      "url": "https://mangalib.me/ru/manga/59071--gyarugema-ni-home-raretai?section=chapters",
+      "skipDownloaded": true
+    },
+    {
+      "name": "Nyanta and Pomeko",
+      "url": "https://mangalib.me/ru/manga/99238--nyanta-and-pomeko?section=chapters",
+      "skipDownloaded": true
+    }
+  ]
+}

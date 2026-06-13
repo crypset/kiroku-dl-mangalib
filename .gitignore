@@ -4,6 +4,8 @@
 /config2.json
 *.sqlite
 /index2.js
+/data
+config.json
 
 # Logs
 logs

@@ -1,6 +1,6 @@
 {
   "name": "kiroku-dl-mangalib",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Simple mangalib downloader",
   "main": "index.js",
   "type": "module",

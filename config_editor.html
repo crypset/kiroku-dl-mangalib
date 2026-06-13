@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -407,12 +407,12 @@
   <div class="header-actions">
     <label class="btn" style="cursor:pointer">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Імпорт
+      Import
       <input type="file" accept=".json" id="import-file" style="display:none">
     </label>
     <button class="btn" onclick="exportJSON()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Експорт
+      Export
     </button>
     <button class="btn primary" onclick="showSection('json')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
@@ -423,11 +423,11 @@
 
 <div class="layout">
   <nav class="sidebar">
-    <div class="sidebar-title">Розділи</div>
+    <div class="sidebar-title">Sections</div>
 
     <button class="nav-item active" onclick="showSection('app')" id="nav-app">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
-      Застосунок
+      Application
     </button>
     <button class="nav-item" onclick="showSection('api')" id="nav-api">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -435,18 +435,18 @@
     </button>
     <button class="nav-item" onclick="showSection('download')" id="nav-download">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Завантаження
+      Download
     </button>
     <button class="nav-item" onclick="showSection('database')" id="nav-database">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-      База даних
+      Database
     </button>
 
     <div class="nav-divider"></div>
 
     <button class="nav-item" onclick="showSection('searches')" id="nav-searches">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      Манга
+      Manga
       <span class="badge" id="searches-badge">0</span>
     </button>
 
@@ -456,7 +456,7 @@
 
     <button class="nav-item" onclick="showSection('json')" id="nav-json">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-      JSON перегляд
+      JSON view
     </button>
   </nav>
 
@@ -467,14 +467,14 @@
       <div class="section-header">
         <div class="section-title">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
-          Застосунок
+          Application
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Загальні налаштування</div>
+        <div class="card-title">General settings</div>
         <div class="field-grid">
           <div class="field">
-            <label>Папка завантажень</label>
+            <label>Download folder</label>
             <input type="text" id="app-downloadDir" placeholder="downloads">
           </div>
         </div>
@@ -490,7 +490,7 @@
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Ендпоінти</div>
+        <div class="card-title">Endpoints</div>
         <div class="field-grid">
           <div class="field" style="grid-column: 1 / -1">
             <label>Base URL</label>
@@ -507,10 +507,10 @@
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Локалізація</div>
+        <div class="card-title">Localization</div>
         <div class="field-grid">
           <div class="field">
-            <label>Часовий пояс</label>
+            <label>Timezone</label>
             <input type="text" id="api-timeZone" placeholder="Europe/Kiev">
           </div>
           <div class="field">
@@ -530,41 +530,41 @@
       <div class="section-header">
         <div class="section-title">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Завантаження
+          Download
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Затримки (мс)</div>
+        <div class="card-title">Delays (ms)</div>
         <div class="field-grid">
           <div class="field">
-            <label>Затримка між главами</label>
+            <label>Delay between chapters</label>
             <input type="number" id="dl-delay" placeholder="4000" min="0">
           </div>
           <div class="field">
-            <label>Затримка між сторінками</label>
+            <label>Delay between pages</label>
             <input type="number" id="dl-pageDelay" placeholder="300" min="0">
           </div>
           <div class="field">
-            <label>Затримка пошуку</label>
+            <label>Search delay</label>
             <input type="number" id="dl-searchDelay" placeholder="6000" min="0">
           </div>
           <div class="field">
-            <label>Затримка перед повтором</label>
+            <label>Retry delay</label>
             <input type="number" id="dl-retryDelay" placeholder="2000" min="0">
           </div>
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Поведінка</div>
+        <div class="card-title">Behaviour</div>
         <div class="field">
-          <label>Кількість спроб</label>
+          <label>Max retries</label>
           <input type="number" id="dl-maxRetries" placeholder="3" min="1" max="20" style="max-width:120px">
         </div>
         <div style="margin-top: 1rem;">
           <div class="toggle-row">
             <div>
-              <div class="toggle-label">Пропускати помилки</div>
-              <div class="toggle-hint">Продовжувати завантаження при помилках окремих сторінок</div>
+              <div class="toggle-label">Skip errors</div>
+              <div class="toggle-hint">Continue downloading when individual pages fail</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="dl-skipErrors">
@@ -574,8 +574,8 @@
           </div>
           <div class="toggle-row">
             <div>
-              <div class="toggle-label">Пропускати завантажені</div>
-              <div class="toggle-hint">Не повторювати вже завантажені глави</div>
+              <div class="toggle-label">Skip downloaded</div>
+              <div class="toggle-hint">Don't re-download already completed chapters</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="dl-skipDownloaded">
@@ -585,8 +585,8 @@
           </div>
           <div class="toggle-row">
             <div>
-              <div class="toggle-label">Використовувати базу даних</div>
-              <div class="toggle-hint">Зберігати стан завантажень у SQLite</div>
+              <div class="toggle-label">Use database</div>
+              <div class="toggle-hint">Track download state in SQLite</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="dl-useDatabase">
@@ -603,22 +603,22 @@
       <div class="section-header">
         <div class="section-title">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-          База даних
+          Database
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Підключення</div>
+        <div class="card-title">Connection</div>
         <div class="field-grid">
           <div class="field" style="grid-column: 1 / -1">
-            <label>Шлях до файлу бази даних</label>
+            <label>Database file path</label>
             <input type="text" id="db-storage" placeholder="./pot.sqlite">
           </div>
         </div>
         <div style="margin-top: 1rem;">
           <div class="toggle-row">
             <div>
-              <div class="toggle-label">Увімкнено</div>
-              <div class="toggle-hint">Активувати збереження даних у базі</div>
+              <div class="toggle-label">Enabled</div>
+              <div class="toggle-hint">Activate data persistence in the database</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="db-enabled">
@@ -628,8 +628,8 @@
           </div>
           <div class="toggle-row">
             <div>
-              <div class="toggle-label">Авто-синхронізація</div>
-              <div class="toggle-hint">Синхронізувати схему при запуску</div>
+              <div class="toggle-label">Auto-sync</div>
+              <div class="toggle-hint">Synchronize schema on startup</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="db-sync">
@@ -639,8 +639,8 @@
           </div>
           <div class="toggle-row">
             <div>
-              <div class="toggle-label">Логування запитів</div>
-              <div class="toggle-hint">Виводити SQL-запити у консоль</div>
+              <div class="toggle-label">Query logging</div>
+              <div class="toggle-hint">Print SQL queries to console</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="db-logging">
@@ -657,17 +657,17 @@
       <div class="searches-header">
         <div class="section-title">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Манга
+          Manga
         </div>
         <button class="btn primary" onclick="addSearch()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Додати
+          Add
         </button>
       </div>
       <div class="hint-box">
-        <strong>branch</strong> — який переклад завантажувати: число (1 = перший, 2 = другий…) або slug команди (напр. 'micromanga').<br>
-        <strong>scan</strong> — вимкнути після повного завантаження завершеної манги, щоб не викликати API щоразу.<br>
-        <strong>skipDownloaded</strong> — пропускати вже завантажені глави.
+        <strong>branch</strong> — which translation to download: a number (1 = first, 2 = second…) or a team slug (e.g. 'micromanga').<br>
+        <strong>scan</strong> — disable once a finished series is fully downloaded, to skip the chapter-list API call on every run.<br>
+        <strong>skipDownloaded</strong> — skip chapters already marked as downloaded.
       </div>
       <div id="searches-container"></div>
     </div>
@@ -677,11 +677,11 @@
       <div class="section-header">
         <div class="section-title">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          JSON перегляд
+          JSON view
         </div>
         <button class="btn" onclick="copyJSON()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Копіювати
+          Copy
         </button>
       </div>
       <pre class="json-view" id="json-output"></pre>
@@ -781,8 +781,8 @@ function renderSearches() {
     card.innerHTML = `
       <div class="search-card-header">
         <div class="search-index">${i + 1}</div>
-        <input type="text" value="${escH(s.name)}" placeholder="Назва" style="flex:1;font-weight:500;" oninput="config.searches[${i}].name=this.value;renderSearchNav()">
-        <button class="btn-icon" onclick="removeSearch(${i})" title="Видалити">
+        <input type="text" value="${escH(s.name)}" placeholder="Title" style="flex:1;font-weight:500;" oninput="config.searches[${i}].name=this.value;renderSearchNav()">
+        <button class="btn-icon" onclick="removeSearch(${i})" title="Remove">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
         </button>
       </div>
@@ -800,7 +800,7 @@ function renderSearches() {
         <div class="toggle-row">
           <div>
             <div class="toggle-label">Scan</div>
-            <div class="toggle-hint">Перевіряти список глав при кожному запуску</div>
+            <div class="toggle-hint">Check chapter list on every run</div>
           </div>
           <label class="toggle">
             <input type="checkbox" ${s.scan ? 'checked' : ''} onchange="config.searches[${i}].scan=this.checked">
@@ -811,7 +811,7 @@ function renderSearches() {
         <div class="toggle-row">
           <div>
             <div class="toggle-label">Skip downloaded</div>
-            <div class="toggle-hint">Пропускати вже завантажені глави</div>
+            <div class="toggle-hint">Skip chapters already marked as downloaded</div>
           </div>
           <label class="toggle">
             <input type="checkbox" ${s.skipDownloaded ? 'checked' : ''} onchange="config.searches[${i}].skipDownloaded=this.checked">
@@ -825,7 +825,7 @@ function renderSearches() {
 
     const navItem = document.createElement('button');
     navItem.className = 'search-nav-item';
-    navItem.textContent = s.name || `Манга ${i + 1}`;
+    navItem.textContent = s.name || `Manga ${i + 1}`;
     navItem.onclick = () => { showSection('searches'); };
     nav.appendChild(navItem);
   });
@@ -839,7 +839,7 @@ function renderSearchNav() {
   config.searches.forEach((s, i) => {
     const navItem = document.createElement('button');
     navItem.className = 'search-nav-item';
-    navItem.textContent = s.name || `Манга ${i + 1}`;
+    navItem.textContent = s.name || `Manga ${i + 1}`;
     navItem.onclick = () => showSection('searches');
     nav.appendChild(navItem);
   });
@@ -863,7 +863,7 @@ function updateJSONView() {
 }
 
 function copyJSON() {
-  navigator.clipboard.writeText(JSON.stringify(config, null, 2)).then(() => toast('JSON скопійовано!'));
+  navigator.clipboard.writeText(JSON.stringify(config, null, 2)).then(() => toast('JSON copied!'));
 }
 
 function exportJSON() {
@@ -872,7 +872,7 @@ function exportJSON() {
   a.href = URL.createObjectURL(blob);
   a.download = 'config.json';
   a.click();
-  toast('Файл збережено!');
+  toast('File saved!');
 }
 
 document.getElementById('import-file').addEventListener('change', function() {
@@ -886,9 +886,9 @@ document.getElementById('import-file').addEventListener('change', function() {
       if (!config.searches) config.searches = [];
       initFields();
       renderSearches();
-      toast('Конфіг імпортовано!');
+      toast('Config imported!');
     } catch {
-      toast('Помилка: невалідний JSON', true);
+      toast('Error: invalid JSON', true);
     }
   };
   reader.readAsText(file);

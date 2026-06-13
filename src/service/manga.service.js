@@ -9,26 +9,40 @@ export class MangaService {
     });
 
     if (created) {
-      print(`Created New Manga: ${title || url}`, "success");
+      print(`Created new manga: ${title || url}`, "success");
     } else {
-      print(`Manga already exists in DB: ${title || url}`, "info");
+      print(`Manga already in DB: ${title || url}`, "info");
     }
 
     return manga;
   }
 
-  async saveChapters(mangaId, chapters) {
-    const savedChapters = [];
+  /**
+   * Saves raw API chapter objects into the DB.
+   * Each chapter's full JSON is stored in the `meta` column so that
+   * download.service.js can use volume/number/branches without re-fetching.
+   */
+  async saveApiChapters(mangaId, apiChapters) {
     let newCount = 0;
     let existingCount = 0;
 
-    for (const chapter of chapters) {
-      const [chapterRecord, created] = await Chapter.findOrCreate({
-        where: { url: chapter.url },
+    for (const apiChapter of apiChapters) {
+      const { number, name, index } = apiChapter;
+
+      // Stable unique key: mangaId + chapter index from API
+      const chapterKey = `manga:${mangaId}:chapter:${index}`;
+
+      const [, created] = await Chapter.findOrCreate({
+        where: {
+          mangaId,
+          // Use the URL column as a unique key per chapter per manga
+          url: chapterKey,
+        },
         defaults: {
           mangaId,
-          name: chapter.name,
-          url: chapter.url,
+          name: name?.trim() || `Chapter ${number}`,
+          url: chapterKey,
+          meta: JSON.stringify(apiChapter),
         },
       });
 
@@ -37,24 +51,17 @@ export class MangaService {
       } else {
         existingCount++;
       }
-
-      savedChapters.push(chapterRecord);
     }
 
     print(
-      `Saved Chapters: ${newCount} new, ${existingCount} already existed`,
+      `Chapters: ${newCount} new, ${existingCount} already existed`,
       "success"
     );
-
-    return savedChapters;
   }
 
-  async getUndownloadedChapters(mangaId) {
+  async getChapters(mangaId, skipDownloaded = true) {
     return await Chapter.findAll({
-      where: {
-        mangaId,
-        isDownloaded: false,
-      },
+      where: skipDownloaded ? { mangaId, isDownloaded: false } : { mangaId },
       order: [["id", "ASC"]],
     });
   }
@@ -65,50 +72,37 @@ export class MangaService {
       chapter.isDownloaded = true;
       chapter.totalPages = totalPages;
       await chapter.save();
-      print(`Chapter ${chapter.name} marked as downloaded`, "success");
+      print(`Marked as downloaded: ${chapter.name}`, "success");
     }
   }
 
-  async savePages(chapterId, totalPages) {
-    const chapter = await Chapter.findByPk(chapterId);
-    if (!chapter) {
-      throw new Error(`Chapter with id ${chapterId} not found`);
-    }
+  // Page tracking
 
-    const baseUrl = chapter.url;
-    const pages = [];
+  /**
+   * Saves page records for a chapter.
+   * pageList is the array from MangalibAPI.getChapterPages().
+   */
+  async savePages(chapterId, pageList) {
+    let newCount = 0;
 
-    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-      const pageUrl = `${baseUrl}?p=${pageNum}`;
-
-      const [page, created] = await Page.findOrCreate({
-        where: {
-          chapterId,
-          pageNumber: pageNum,
-        },
+    for (const p of pageList) {
+      const [, created] = await Page.findOrCreate({
+        where: { chapterId, pageNumber: p.slug },
         defaults: {
           chapterId,
-          pageNumber: pageNum,
-          url: pageUrl,
+          pageNumber: p.slug,
+          url: p.url,
         },
       });
-
-      pages.push(page);
+      if (created) newCount++;
     }
 
-    print(
-      `Saved ${totalPages} pages for chapter ${chapter.name}`,
-      "info"
-    );
-    return pages;
+    print(`Pages saved: ${newCount} new for chapter ${chapterId}`, "info");
   }
 
   async getUndownloadedPages(chapterId) {
     return await Page.findAll({
-      where: {
-        chapterId,
-        isDownloaded: false,
-      },
+      where: { chapterId, isDownloaded: false },
       order: [["pageNumber", "ASC"]],
     });
   }
@@ -131,7 +125,7 @@ export class MangaService {
     return {
       total,
       downloaded,
-      percentage: total > 0 ? (downloaded / total) * 100 : 0,
+      percentage: total > 0 ? Math.round((downloaded / total) * 100) : 0,
     };
   }
 }

@@ -5,7 +5,8 @@
 *.sqlite
 /index2.js
 /data
-config.json
+/config.json
+test
 
 # Logs
 logs

@@ -4,14 +4,17 @@ import {
   initializeDatabase,
   closeDatabase,
 } from "./src/teapot/sqlite/sqlite_db.js";
-import { USE_DATABASE } from "./src/config/app.config.js";
-import { WELCOM_MESSAGE, SUB_TITLE } from "./src/shared/message.js";
+import {
+  SUB_TITLE,
+  USE_DATABASE,
+  WELCOME_MESSAGE,
+} from "./src/config/app.config.js";
 
 async function main() {
   let downloader = null;
 
   try {
-    banner(WELCOM_MESSAGE, SUB_TITLE);
+    banner(WELCOME_MESSAGE, SUB_TITLE);
     print("Starting Mangalib downloader...", "system");
 
     if (!USE_DATABASE) {

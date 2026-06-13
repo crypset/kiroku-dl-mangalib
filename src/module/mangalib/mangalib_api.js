@@ -1,363 +1,273 @@
 import { print, sleep } from "../../shared/utils.js";
 import fs from "fs/promises";
 import path from "path";
-import { DOWNLOAD_DIR } from "../../config/app.config.js";
+import {
+  API_BASE_URL,
+  API_HEADERS,
+  DOWNLOAD_DIR,
+  IMAGE_BASE_URL,
+  IMAGE_HEADERS,
+  MAX_RETRIES,
+  PAGE_DELAY,
+  RETRY_DELAY,
+} from "../../config/app.config.js";
 
 export class MangalibAPI {
-  constructor(context) {
-    this.context = context;
+  constructor() {
     this.baseDownloadPath = path.join(process.cwd(), DOWNLOAD_DIR);
-    this.maxRetries = 3;
-    this.retryDelay = 2000;
+    this.maxRetries = MAX_RETRIES;
+    this.retryDelay = RETRY_DELAY;
   }
 
-  async getChaptersList(url) {
-    const page = await this.context.newPage();
-
-    try {
-      await page.goto(url, {
-        waitUntil: "domcontentloaded",
-        timeout: 30000,
-      });
-
-      const mainContainerSelectors = [
-        "#app > div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div:nth-child(2) > div:nth-child(3) > div:nth-child(1)",
-        "#app > div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > div:nth-child(2) > div:nth-child(3) > div:nth-child(1)",
-      ];
-
-      const mainContainerPath = await this.findWorkingSelector(
-        page,
-        mainContainerSelectors
-      );
-
-      if (!mainContainerPath) {
-        throw new Error(
-          "Could not find chapters container with any known selector"
-        );
-      }
-
-      print(`Using selector: ${mainContainerPath}`, "info");
-
-      const chapters = await this.scrollAndCollectChapters(
-        page,
-        mainContainerPath
-      );
-
-      print(`Retrieved ${chapters.length} chapters`, "success");
-      return chapters;
-    } catch (error) {
-      print(`getChaptersList: ${error.message}`, "error");
-      throw error;
-    } finally {
-      await this.closePage(page);
-    }
+  /**
+   * Extracts the manga slug from a full mangalib URL.
+   * e.g. "https://mangalib.me/ru/manga/9664--dosanko-gyaru-is-mega-cute?section=chapters"
+   *      becomes "9664--dosanko-gyaru-is-mega-cute"
+   */
+  extractMangaSlug(url) {
+    const match = url.match(/\/manga\/([^/?#]+)/);
+    if (!match) throw new Error(`Cannot extract manga slug from URL: ${url}`);
+    return match[1];
   }
 
-  async findWorkingSelector(page, selectors) {
-    for (const selector of selectors) {
-      try {
-        await page.waitForSelector(selector, { timeout: 5000 });
-        return selector;
-      } catch {
-        continue;
-      }
-    }
-    return null;
-  }
+  /**
+   * Resolves which branch index to use.
+   * branchConfig can be:
+   *   - undefined / null: use index 0 (first branch)
+   *   - number: use that index - 1 (1-based)
+   *   - string: match by slug
+   */
+  resolveBranchIndex(branches, branchConfig) {
+    if (!branchConfig) return 0;
 
-  async downloadChapter(chapterUrl, chapterName, mangaTitle) {
-    let page = null;
-
-    try {
-      page = await this.context.newPage();
-
-      await page.goto(chapterUrl, {
-        waitUntil: "domcontentloaded",
-        timeout: 30000,
-      });
-
-      const total = await this.getTotalPages(page);
-      print(`Chapter has ${total} pages`, "info");
-
-      const chapterDir = await this.createChapterDirectory(
-        mangaTitle,
-        chapterName
-      );
-
-      let successfulDownloads = 0;
-      let skippedPages = [];
-
-      for (let pageNum = 1; pageNum <= total; pageNum++) {
-        const isLastPage = pageNum === total;
-        const downloaded = await this.downloadPageWithRetry(
-          page,
-          chapterUrl,
-          chapterDir,
-          pageNum,
-          isLastPage
-        );
-
-        if (downloaded) {
-          successfulDownloads++;
-        } else {
-          skippedPages.push(pageNum);
-        }
-
-        await sleep(200);
-      }
-
-      if (skippedPages.length > 0) {
+    if (typeof branchConfig === "number") {
+      const idx = branchConfig - 1;
+      if (idx < 0 || idx >= branches.length) {
         print(
-          `Chapter ${chapterName} completed with ${skippedPages.length} skipped page(s): ${skippedPages.join(", ")}`,
+          `Branch ${branchConfig} not found, falling back to first branch`,
           "warning"
         );
-      } else {
-        print(`Chapter ${chapterName} downloaded successfully`, "success");
+        return 0;
       }
-
-      return successfulDownloads;
-    } catch (error) {
-      print(`downloadChapter: ${error.message}`, "error");
-      throw error;
-    } finally {
-      await this.closePage(page);
+      return idx;
     }
+
+    // string slug
+    const idx = branches.findIndex((b) =>
+      b.teams?.some((t) => t.slug === branchConfig)
+    );
+    if (idx === -1) {
+      print(
+        `Branch slug "${branchConfig}" not found, falling back to first branch`,
+        "warning"
+      );
+      return 0;
+    }
+    return idx;
   }
 
-  async getTotalPages(page) {
-    const rawPages = await page.textContent(
-      "#app > div:nth-child(1) > main > div > footer > label"
+  /**
+   * Fetches the full chapters list for a manga.
+   * Returns an array of chapter objects from the API (data[]).
+   */
+  async getChaptersList(mangaUrl) {
+    const slug = this.extractMangaSlug(mangaUrl);
+    const apiUrl = `${API_BASE_URL}/manga/${slug}/chapters`;
+
+    print(`Fetching chapters for: ${slug}`, "info");
+
+    const response = await this.fetchWithRetry(apiUrl, { headers: API_HEADERS });
+    const json = await response.json();
+
+    if (!json?.data) {
+      throw new Error(`Unexpected chapters response for ${slug}`);
+    }
+
+    print(`Found ${json.data.length} chapters`, "success");
+    return json.data; // raw API chapter objects
+  }
+
+  /**
+   * Fetches page list for a single chapter.
+   * Returns pages array from data.pages.
+   */
+  async getChapterPages(mangaSlug, volume, number, branchId) {
+    const params = new URLSearchParams({
+      volume,
+      number,
+      ...(branchId ? { branch_id: branchId } : {}),
+    });
+
+    const apiUrl = `${API_BASE_URL}/manga/${mangaSlug}/chapter?${params}`;
+
+    const response = await this.fetchWithRetry(apiUrl, { headers: API_HEADERS });
+    const json = await response.json();
+
+    if (!json?.data?.pages) {
+      throw new Error(
+        `Unexpected pages response for vol${volume} ch${number}`
+      );
+    }
+
+    return json.data.pages;
+  }
+
+  /**
+   * Downloads all pages for a chapter and saves them to disk.
+   * Returns number of successfully downloaded pages.
+   */
+  async downloadChapter(chapterData, mangaTitle, mangaSlug, branchConfig) {
+    const { volume, number, name, branches } = chapterData;
+
+    // Resolve branch
+    const branchIdx = this.resolveBranchIndex(branches ?? [], branchConfig);
+    const branch = branches?.[branchIdx];
+    const branchId = branch?.branch_id ?? null;
+
+    // Build chapter folder name: "Volume 1 Chapter 0 Oneshot" or "Volume 1 Chapter 1"
+    const chapterFolderName = this.buildChapterFolderName(volume, number, name);
+
+    print(`Downloading: ${chapterFolderName}`, "info");
+
+    // Get pages
+    const pages = await this.getChapterPages(mangaSlug, volume, number, branchId);
+    print(`  ${pages.length} pages found`, "info");
+
+    const chapterDir = await this.createChapterDirectory(
+      mangaTitle,
+      chapterFolderName
     );
 
-    const [, total] = rawPages.split("/").map((t) => parseInt(t.trim(), 10));
+    let successCount = 0;
 
-    return total;
+    for (const page of pages) {
+      const downloaded = await this.downloadPageWithRetry(page, chapterDir);
+      if (downloaded) successCount++;
+      await sleep(PAGE_DELAY);
+    }
+
+    print(
+      `  Done: ${successCount}/${pages.length} pages saved`,
+      successCount === pages.length ? "success" : "warning"
+    );
+
+    if (successCount !== pages.length) {
+      throw new Error(
+        `Chapter incomplete: downloaded ${successCount}/${pages.length} pages`
+      );
+    }
+
+    return successCount;
   }
 
-  async downloadPageWithRetry(page, chapterUrl, chapterDir, pageNum, isLastPage = false) {
-    let lastError = null;
-
+  /**
+   * Downloads a single page image with retry logic.
+   */
+  async downloadPageWithRetry(page, chapterDir) {
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
-        await this.downloadPage(page, chapterUrl, chapterDir, pageNum);
-        return true; // Успішно завантажено
+        await this.downloadPage(page, chapterDir);
+        return true;
       } catch (error) {
-        lastError = error;
-
         if (attempt < this.maxRetries) {
           print(
-            `Page ${pageNum} failed (attempt ${attempt}/${this.maxRetries}), retrying...`,
+            `  Page ${page.slug} failed (attempt ${attempt}/${this.maxRetries}), retrying...`,
             "warning"
           );
           await sleep(this.retryDelay);
         } else {
-          // Досягнуто максимальної кількості спроб
-          if (isLastPage) {
-            print(
-              `Page ${pageNum} (last page) failed after ${this.maxRetries} attempts. Skipping and continuing...`,
-              "warning"
-            );
-            return false; // Пропускаємо останню сторінку
-          } else {
-            print(
-              `Page ${pageNum} failed after ${this.maxRetries} attempts`,
-              "error"
-            );
-            throw lastError; // Викидаємо помилку для не-останніх сторінок
-          }
+          print(
+            `  Page ${page.slug} failed after ${this.maxRetries} attempts: ${error.message}`,
+            "error"
+          );
+          return false;
         }
       }
     }
-
-    // Цей код досягається тільки для останньої сторінки
     return false;
   }
 
-  async downloadPage(page, chapterUrl, chapterDir, pageNum) {
+  /**
+   * Downloads a single page image to disk.
+   * File name: <slug>.png (or original extension from image filename).
+   */
+  async downloadPage(page, chapterDir) {
+    // Build image URL from the configured image host and API page path.
+    // page.url looks like "//manga/dosanko-gyaru-is-mega-cute/chapters/3555341/filename.png"
+    const imageUrl = `${IMAGE_BASE_URL}${page.url.replace(/^\/\//, "/")}`;
+
+    const ext = path.extname(page.image) || ".png";
+    const fileName = `${page.slug}${ext}`;
+    const filePath = path.join(chapterDir, fileName);
+
+    // Skip if already exists on disk
     try {
-      const pageUrl = `${chapterUrl}${chapterUrl.includes('?') ? '&' : '?'}p=${pageNum}`;
-
-      await page.goto(pageUrl, {
-        waitUntil: "domcontentloaded",
-        timeout: 30000,
-      });
-
-      // Очікування мережевого спокою
-      await page.waitForLoadState("networkidle", { timeout: 10000 }).catch(() => {
-        // Ігноруємо помилку, продовжуємо
-      });
-
-      const imageQuery = `div[data-page="${pageNum}"] > img`;
-
-      // Спочатку чекаємо на елемент
-      await page.waitForSelector(imageQuery, { timeout: 30000 });
-
-      // Потім чекаємо поки картинка завантажиться
-      const imageLoaded = await page.waitForFunction(
-        (selector) => {
-          const img = document.querySelector(selector);
-          return img && img.complete && img.naturalHeight > 0;
-        },
-        imageQuery,
-        { timeout: 30000 }
-      );
-
-      if (!imageLoaded) {
-        throw new Error(`Image element found but failed to load for page ${pageNum}`);
-      }
-
-      const imageUrl = await page.$eval(imageQuery, (img) => img.src);
-
-      if (!imageUrl || imageUrl === '') {
-        throw new Error(`Empty image URL for page ${pageNum}`);
-      }
-
-      await this.downloadImage(page, imageUrl, chapterDir, pageNum);
-    } catch (error) {
-      print(`downloadPage ${pageNum}: ${error.message}`, "error");
-      throw error;
+      await fs.access(filePath);
+      print(`  Page ${page.slug} already on disk, skipping`, "info");
+      return filePath;
+    } catch {
+      // File does not exist, proceed
     }
+
+    const response = await this.fetchWithRetry(imageUrl, {
+      headers: IMAGE_HEADERS,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} for image ${imageUrl}`);
+    }
+
+    const buffer = Buffer.from(await response.arrayBuffer());
+
+    if (buffer.length === 0) {
+      throw new Error(`Empty image buffer for page ${page.slug}`);
+    }
+
+    await fs.writeFile(filePath, buffer);
+    print(`  Saved page ${page.slug}`, "info");
+
+    return filePath;
   }
 
-  async downloadImage(page, imageUrl, chapterDir, pageNum) {
-    try {
-      const imageData = await page.evaluate(async (url) => {
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const blob = await response.blob();
+  // Helpers
 
-        if (blob.size === 0) {
-          throw new Error('Empty image blob received');
-        }
-
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
-      }, imageUrl);
-
-      const base64Data = imageData.split(",")[1];
-      const buffer = Buffer.from(base64Data, "base64");
-
-      if (buffer.length === 0) {
-        throw new Error('Empty buffer after base64 decode');
-      }
-
-      const ext = path.extname(new URL(imageUrl).pathname) || ".jpg";
-      const fileName = `page_${pageNum.toString().padStart(3, "0")}${ext}`;
-      const filePath = path.join(chapterDir, fileName);
-
-      await fs.writeFile(filePath, buffer);
-      print(`Downloaded page ${pageNum}`, "info");
-
-      return filePath;
-    } catch (error) {
-      print(`downloadImage: ${error.message}`, "error");
-      throw error;
+  buildChapterFolderName(volume, number, name) {
+    let folderName = `Volume ${volume} Chapter ${number}`;
+    if (name && name.trim()) {
+      folderName += ` ${name.trim()}`;
     }
+    return folderName;
   }
 
   async createChapterDirectory(mangaTitle, chapterName) {
-    const sanitizeName = (name) => name.replace(/[<>:"/\\|?*]/g, "_").trim();
-
-    const mangaDir = path.join(this.baseDownloadPath, sanitizeName(mangaTitle));
-    const chapterDir = path.join(mangaDir, sanitizeName(chapterName));
-
-    await fs.mkdir(chapterDir, { recursive: true });
-
-    return chapterDir;
+    const sanitize = (s) => s.replace(/[<>:"/\\|?*]/g, "_").trim();
+    const dir = path.join(
+      this.baseDownloadPath,
+      sanitize(mangaTitle),
+      sanitize(chapterName)
+    );
+    await fs.mkdir(dir, { recursive: true });
+    return dir;
   }
 
-  async scrollAndCollectChapters(page, containerSelector) {
-    return await page.evaluate(async (selector) => {
-      const chaptersMap = new Map();
-      const container = document.querySelector(selector);
+  async fetchWithRetry(url, options = {}) {
+    let lastError;
 
-      if (!container) {
-        throw new Error("Container not found");
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        const response = await fetch(url, options);
+        if (!response.ok && response.status !== 404) {
+          throw new Error(`HTTP ${response.status}: ${url}`);
+        }
+        return response;
+      } catch (error) {
+        lastError = error;
+        if (attempt < this.maxRetries) {
+          await sleep(this.retryDelay);
+        }
       }
-
-      const collectVisibleChapters = () => {
-        const chapterContainers = container.querySelectorAll(":scope > div");
-
-        chapterContainers.forEach((chapterContainer) => {
-          const link = chapterContainer.querySelector("a");
-          if (link) {
-            const name = link.textContent?.trim() || null;
-            const url = link.href || null;
-
-            if (name && url && !chaptersMap.has(url)) {
-              chaptersMap.set(url, { name, url });
-            }
-          }
-        });
-      };
-
-      await new Promise((resolve) => {
-        let totalHeight = 0;
-        let lastChaptersCount = 0;
-        let stableCount = 0;
-        const distance = 100;
-        const maxStableChecks = 5;
-
-        const timer = setInterval(() => {
-          collectVisibleChapters();
-
-          const scrollHeight = document.body.scrollHeight;
-          window.scrollBy(0, distance);
-          totalHeight += distance;
-
-          const currentChaptersCount = chaptersMap.size;
-
-          if (totalHeight >= scrollHeight) {
-            if (currentChaptersCount === lastChaptersCount) {
-              stableCount++;
-              if (stableCount >= maxStableChecks) {
-                clearInterval(timer);
-                collectVisibleChapters();
-                resolve();
-              }
-            } else {
-              stableCount = 0;
-              lastChaptersCount = currentChaptersCount;
-              totalHeight = scrollHeight - distance;
-            }
-          }
-        }, 100);
-      });
-
-      return Array.from(chaptersMap.values());
-    }, containerSelector);
-  }
-
-  async scrollPageToBottom(page) {
-    await page.evaluate(async () => {
-      await new Promise((resolve) => {
-        let totalHeight = 0;
-        const distance = 100;
-        const timer = setInterval(() => {
-          const scrollHeight = document.body.scrollHeight;
-          window.scrollBy(0, distance);
-          totalHeight += distance;
-
-          if (totalHeight >= scrollHeight) {
-            clearInterval(timer);
-            resolve();
-          }
-        }, 100);
-      });
-    });
-  }
-
-  async closePage(page) {
-    if (page && !page.isClosed()) {
-      await page.close().catch(() => {});
     }
+
+    throw lastError;
   }
 }

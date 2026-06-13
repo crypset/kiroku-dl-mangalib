@@ -2,50 +2,49 @@
   "app": {
     "downloadDir": "downloads"
   },
-  "browser": {
-    "headless": true,
-    "viewport": {
-      "width": 1280,
-      "height": 720
-    },
-    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "timeout": 30000,
-    "args": [
-      "--disable-blink-features=AutomationControlled",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-infobars",
-      "--disable-extensions",
-      "--disable-dev-shm-usage"
-    ]
+  "api": {
+    "baseUrl": "https://api.cdnlibs.org/api",
+    "imageBaseUrl": "https://img3.mixlib.me",
+    "referer": "https://mangalib.me/",
+    "timeZone": "Europe/Kiev",
+    "siteId": 1,
+    "acceptLanguage": "en-US,en;q=0.5"
   },
-  "api": {},
   "download": {
     "delay": 4000,
-    "pageDelay": 4000,
+    "pageDelay": 300,
     "searchDelay": 6000,
-    "maxConcurrent": 1,
+    "maxRetries": 3,
+    "retryDelay": 2000,
     "skipErrors": true,
     "skipDownloaded": true,
     "useDatabase": true
   },
   "database": {
     "enabled": true,
-    "sync": true
-  },
-  "comments": {
-    "useDatabase": "Whether to use the database to track downloaded images"
+    "sync": true,
+    "storage": "./pot.sqlite",
+    "logging": false
   },
   "searches": [
     {
       "name": "Gyaru Gamer Homeraretai",
       "url": "https://mangalib.me/ru/manga/59071--gyarugema-ni-home-raretai?section=chapters",
+      "branch": 1,
+      "scan": true,
       "skipDownloaded": true
     },
     {
       "name": "Nyanta and Pomeko",
       "url": "https://mangalib.me/ru/manga/99238--nyanta-and-pomeko?section=chapters",
+      "branch": 1,
+      "scan": true,
       "skipDownloaded": true
     }
-  ]
+  ],
+  "_comments": {
+    "branch": "Which translation to download. Use a number (1 = first, 2 = second, ...) or a team slug string (e.g. 'micromanga'). Defaults to 1.",
+    "scan": "Set to false once a manga series is finished AND fully downloaded to skip the chapter-list API call on every run. Defaults to true.",
+    "skipDownloaded": "Skip chapters already marked as downloaded in the database."
+  }
 }

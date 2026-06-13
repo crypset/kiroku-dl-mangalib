@@ -27,6 +27,12 @@ export const Chapter = sequelize.define(
       allowNull: false,
       unique: true,
     },
+    // Raw API chapter object stored as JSON string.
+    // Used by download.service to get volume/number/branches without re-fetching.
+    meta: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     isDownloaded: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,

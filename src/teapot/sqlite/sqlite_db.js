@@ -1,10 +1,15 @@
 import { Sequelize } from "sequelize";
 import { print } from "../../shared/utils.js";
+import {
+  DB_LOGGING,
+  DB_STORAGE,
+  DB_SYNC,
+} from "../../config/app.config.js";
 
 export const sequelize = new Sequelize({
   dialect: "sqlite",
-  storage: "./pot.sqlite",
-  logging: false,
+  storage: DB_STORAGE,
+  logging: DB_LOGGING,
 });
 
 export async function initializeDatabase() {
@@ -12,8 +17,10 @@ export async function initializeDatabase() {
     await sequelize.authenticate();
     print("Database connection established successfully", "system");
 
-    await sequelize.sync();
-    print("Database models synchronized", "system");
+    if (DB_SYNC) {
+      await sequelize.sync();
+      print("Database models synchronized", "system");
+    }
 
     return true;
   } catch (error) {

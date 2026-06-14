@@ -670,6 +670,10 @@
         <strong>skipDownloaded</strong> — skip chapters already marked as downloaded.
       </div>
       <div id="searches-container"></div>
+      <button class="btn primary" onclick="addSearch()" style="margin-top:0.75rem">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add
+      </button>
     </div>
 
     <!-- JSON view -->
@@ -849,6 +853,9 @@ function addSearch() {
   config.searches.push({ name: '', url: '', branch: 1, scan: true, skipDownloaded: true });
   renderSearches();
   showSection('searches');
+  const cards = document.querySelectorAll('#searches-container .search-card');
+  const last = cards[cards.length - 1];
+  if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function removeSearch(i) {

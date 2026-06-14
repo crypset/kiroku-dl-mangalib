@@ -239,12 +239,20 @@ export class MangalibAPI {
     return folderName;
   }
 
+  sanitizeFolderName(name) {
+    const sanitized = String(name)
+      .replace(/[<>:"/\\|?*]/g, "_")
+      .trim()
+      .replace(/[. ]+$/g, "");
+
+    return sanitized || "_";
+  }
+
   async createChapterDirectory(mangaTitle, chapterName) {
-    const sanitize = (s) => s.replace(/[<>:"/\\|?*]/g, "_").trim();
     const dir = path.join(
       this.baseDownloadPath,
-      sanitize(mangaTitle),
-      sanitize(chapterName)
+      this.sanitizeFolderName(mangaTitle),
+      this.sanitizeFolderName(chapterName)
     );
     await fs.mkdir(dir, { recursive: true });
     return dir;

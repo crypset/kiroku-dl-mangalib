@@ -131,4 +131,5 @@ The project currently has no automated unit or integration tests.
 - `scan: false` only skips scans after the manga row has `isCompleted = true`.
 - Deleting `pot.sqlite` resets all download history.
 - A chapter remains pending when any page still fails after all retries.
+- Folder names are sanitized for Windows, including trailing dots and spaces.
 - Use the downloader only where you have permission and respect service limits.

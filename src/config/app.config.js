@@ -62,14 +62,3 @@ export const LOG_SYMBOLS = {
   error: "x",
   separator: "|",
 };
-
-export const WELCOME_MESSAGE =
-  "\n" +
-  " mm   mmm     ##                         mm                 \n" +
-  ' ##  ##"      ""                         ##                 \n' +
-  ' ##m##      ####      ##m####   m####m   ## m##"   ##    ## \n' +
-  ' #####        ##      ##"      ##"  "##  ##m##     ##    ## \n' +
-  ' ##  ##m      ##      ##       ##    ##  ##"##m    ##    ## \n' +
-  ' ##   ##m  mmm##mmm   ##       "##mm##"  ##  "#m   ##mmm### \n' +
-  ' ""    ""  """"""""   ""         """"    ""   """   """" ""\n';
-export const SUB_TITLE = "  Mangalib Download Tool\n  by Seth The White";

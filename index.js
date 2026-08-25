@@ -4,11 +4,8 @@ import {
   initializeDatabase,
   closeDatabase,
 } from "./src/teapot/sqlite/sqlite_db.js";
-import {
-  SUB_TITLE,
-  USE_DATABASE,
-  WELCOME_MESSAGE,
-} from "./src/config/app.config.js";
+import { USE_DATABASE } from "./src/config/app.config.js";
+import { WELCOME_MESSAGE, SUB_TITLE } from "./src/shared/messages.js";
 
 async function main() {
   let downloader = null;

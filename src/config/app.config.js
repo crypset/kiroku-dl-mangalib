@@ -9,7 +9,7 @@ const download = config.download ?? {};
 export const DOWNLOAD_DIR = app.downloadDir ?? "downloads";
 
 export const API_BASE_URL = api.baseUrl ?? "https://api.cdnlibs.org/api";
-export const IMAGE_BASE_URL = api.imageBaseUrl ?? "https://img3.mixlib.me";
+export const IMAGE_BASE_URL = api.imageBaseUrl ?? "https://img2.mixlib.me";
 export const API_HEADERS = {
   "client-time-zone": api.timeZone ?? "Europe/Kiev",
   "content-type": "application/json",

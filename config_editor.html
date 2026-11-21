@@ -701,7 +701,7 @@ let config = {
   app: { downloadDir: "downloads" },
   api: {
     baseUrl: "https://api.cdnlibs.org/api",
-    imageBaseUrl: "https://img3.mixlib.me",
+    imageBaseUrl: "https://img2.mixlib.me",
     referer: "https://mangalib.me/",
     timeZone: "Europe/Kiev",
     siteId: 1,
@@ -793,7 +793,7 @@ function renderSearches() {
       <div class="field-grid">
         <div class="field" style="grid-column: 1 / -1">
           <label>URL</label>
-          <input type="url" value="${escH(s.url)}" placeholder="https://mangalib.me/..." oninput="config.searches[${i}].url=this.value">
+          <input type="url" value="${escH(s.url)}" placeholder="https://mangalib.me/... or https://1.seimanga.me/... or https://a.zazaza.me/..." oninput="config.searches[${i}].url=this.value">
         </div>
         <div class="field">
           <label>Branch</label>

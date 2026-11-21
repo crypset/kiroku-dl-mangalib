@@ -1,5 +1,5 @@
 import { print, sleep } from "../shared/utils.js";
-import { MangalibAPI } from "../module/mangalib/mangalib_api.js";
+import { ProviderFactory } from "../module/provider_factory.js";
 import { MangaService } from "./manga.service.js";
 import {
   CHAPTER_DELAY,
@@ -11,8 +11,10 @@ import {
 
 export class MangaDownloader {
   constructor() {
-    this.api = new MangalibAPI();
+    this.providerFactory = new ProviderFactory();
     this.mangaService = new MangaService();
+    // Kept for backward compatibility if accessed externally
+    this.api = this.providerFactory.providers[0];
   }
 
   /**
@@ -20,7 +22,7 @@ export class MangaDownloader {
    * but nothing needs to be set up now (no browser).
    */
   async initialize() {
-    print("Downloader initialized (API mode)", "success");
+    print("Downloader initialized (Multi-provider API mode)", "success");
   }
 
   async downloadAll() {
@@ -42,7 +44,8 @@ export class MangaDownloader {
     try {
       print(`Processing: ${search.name || search.url}`, "info");
 
-      const mangaSlug = this.api.extractMangaSlug(search.url);
+      const provider = this.providerFactory.getProvider(search.url);
+      const mangaSlug = provider.extractMangaSlug(search.url);
 
       // Persist manga record
       const manga = await this.mangaService.getOrCreateManga(
@@ -53,13 +56,13 @@ export class MangaDownloader {
       // If manga is marked as completed and scan is disabled, skip chapter check
       if (manga.isCompleted && search.scan === false) {
         print(
-          `Manga "${manga.title}" is completed and scan=false, skipping chapter check`,
+          `Manga "${manga.title || mangaSlug}" is completed and scan=false, skipping chapter check`,
           "info"
         );
         // Still download any chapters that are already in DB but not downloaded
         const pending = await this.mangaService.getChapters(manga.id, true);
         if (pending.length === 0) {
-          print(`No pending chapters for "${manga.title}"`, "info");
+          print(`No pending chapters for "${manga.title || mangaSlug}"`, "info");
           return;
         }
         print(`${pending.length} pending chapters to download`, "info");
@@ -67,13 +70,20 @@ export class MangaDownloader {
           pending,
           manga,
           mangaSlug,
-          search.branch
+          search.branch,
+          provider
         );
         return;
       }
 
-      // Fetch fresh chapter list from API
-      const apiChapters = await this.api.getChaptersList(search.url);
+      // Fetch fresh chapter list from the appropriate provider
+      const apiChapters = await provider.getChaptersList(search.url);
+
+      // If manga title is missing in DB but was extracted by provider, persist it
+      if (!manga.title && provider.lastExtractedTitle) {
+        manga.title = provider.lastExtractedTitle;
+        await manga.save();
+      }
 
       // Save new chapters to DB (skips already-known ones)
       await this.mangaService.saveApiChapters(manga.id, apiChapters);
@@ -87,8 +97,10 @@ export class MangaDownloader {
       );
       print(`Chapters to download: ${undownloaded.length}`, "info");
 
+      const displayTitle = manga.title || search.name || mangaSlug;
+
       if (undownloaded.length === 0) {
-        print(`"${manga.title}" is up to date`, "success");
+        print(`"${displayTitle}" is up to date`, "success");
         return;
       }
 
@@ -96,24 +108,47 @@ export class MangaDownloader {
         undownloaded,
         manga,
         mangaSlug,
-        search.branch
+        search.branch,
+        provider
       );
 
-      print(`Completed: ${manga.title}`, "success");
+      print(`Completed: ${displayTitle}`, "success");
     } catch (error) {
-      print(`Error processing manga "${search.name}": ${error.message}`, "error");
+      print(
+        `Error processing manga "${search.name || search.url}": ${error.message}`,
+        "error"
+      );
       throw error;
     }
   }
 
-  async downloadPendingChapters(chapters, manga, mangaSlug, branchConfig) {
+  async downloadPendingChapters(
+    chapters,
+    manga,
+    mangaSlug,
+    branchConfig,
+    provider = this.api
+  ) {
+    const displayTitle = manga.title || mangaSlug;
     for (const chapter of chapters) {
-      await this.downloadChapter(chapter, manga.title, mangaSlug, branchConfig);
+      await this.downloadChapter(
+        chapter,
+        displayTitle,
+        mangaSlug,
+        branchConfig,
+        provider
+      );
       await sleep(CHAPTER_DELAY);
     }
   }
 
-  async downloadChapter(chapter, mangaTitle, mangaSlug, branchConfig) {
+  async downloadChapter(
+    chapter,
+    mangaTitle,
+    mangaSlug,
+    branchConfig,
+    provider = this.api
+  ) {
     try {
       // chapter.meta holds the raw API chapter object stored during saveApiChapters
       const chapterMeta = chapter.meta ? JSON.parse(chapter.meta) : null;
@@ -123,7 +158,7 @@ export class MangaDownloader {
         return;
       }
 
-      const totalPages = await this.api.downloadChapter(
+      const totalPages = await provider.downloadChapter(
         chapterMeta,
         mangaTitle,
         mangaSlug,

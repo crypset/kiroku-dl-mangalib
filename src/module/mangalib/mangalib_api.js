@@ -1,22 +1,34 @@
 import { print, sleep } from "../../shared/utils.js";
 import fs from "fs/promises";
 import path from "path";
+import { BaseProvider } from "../base/base_provider.js";
 import {
   API_BASE_URL,
   API_HEADERS,
-  DOWNLOAD_DIR,
   IMAGE_BASE_URL,
   IMAGE_HEADERS,
-  MAX_RETRIES,
-  PAGE_DELAY,
-  RETRY_DELAY,
 } from "../../config/app.config.js";
 
-export class MangalibAPI {
-  constructor() {
-    this.baseDownloadPath = path.join(process.cwd(), DOWNLOAD_DIR);
-    this.maxRetries = MAX_RETRIES;
-    this.retryDelay = RETRY_DELAY;
+export class MangalibAPI extends BaseProvider {
+  constructor(options = {}) {
+    super(options);
+    this.primaryImageBaseUrl = options.imageBaseUrl ?? IMAGE_BASE_URL;
+    // Build list of candidate CDN image hosts for failover
+    this.imageHosts = [
+      this.primaryImageBaseUrl,
+      "https://img2.mixlib.me",
+      "https://img3.mixlib.me",
+    ].filter((h, idx, arr) => h && arr.indexOf(h) === idx);
+    this.currentHostIndex = 0;
+  }
+
+  /**
+   * Checks if this provider handles the given URL.
+   */
+  canHandle(url) {
+    return /(?:mangalib\.(?:me|org)|hentailib\.(?:me|org)|slashlib\.(?:me|org))/i.test(
+      url
+    );
   }
 
   /**
@@ -97,7 +109,6 @@ export class MangalibAPI {
       number,
       ...(branchId ? { branch_id: branchId } : {}),
     });
-
     const apiUrl = `${API_BASE_URL}/manga/${mangaSlug}/chapter?${params}`;
 
     const response = await this.fetchWithRetry(apiUrl, { headers: API_HEADERS });
@@ -143,7 +154,7 @@ export class MangalibAPI {
     for (const page of pages) {
       const downloaded = await this.downloadPageWithRetry(page, chapterDir);
       if (downloaded) successCount++;
-      await sleep(PAGE_DELAY);
+      await sleep(this.pageDelay);
     }
 
     print(
@@ -169,15 +180,17 @@ export class MangalibAPI {
         await this.downloadPage(page, chapterDir);
         return true;
       } catch (error) {
+        const errorDetail =
+          error.cause?.code || error.cause?.message || error.message;
         if (attempt < this.maxRetries) {
           print(
-            `  Page ${page.slug} failed (attempt ${attempt}/${this.maxRetries}), retrying...`,
+            `  Page ${page.slug} failed (attempt ${attempt}/${this.maxRetries}: ${errorDetail}), retrying...`,
             "warning"
           );
           await sleep(this.retryDelay);
         } else {
           print(
-            `  Page ${page.slug} failed after ${this.maxRetries} attempts: ${error.message}`,
+            `  Page ${page.slug} failed after ${this.maxRetries} attempts: ${errorDetail}`,
             "error"
           );
           return false;
@@ -188,14 +201,11 @@ export class MangalibAPI {
   }
 
   /**
-   * Downloads a single page image to disk.
+   * Downloads a single page image to disk with automatic CDN failover.
    * File name: <slug>.png (or original extension from image filename).
    */
   async downloadPage(page, chapterDir) {
-    // Build image URL from the configured image host and API page path.
-    // page.url looks like "//manga/dosanko-gyaru-is-mega-cute/chapters/3555341/filename.png"
-    const imageUrl = `${IMAGE_BASE_URL}${page.url.replace(/^\/\//, "/")}`;
-
+    const rawPath = page.url.replace(/^\/\//, "/");
     const ext = path.extname(page.image) || ".png";
     const fileName = `${page.slug}${ext}`;
     const filePath = path.join(chapterDir, fileName);
@@ -209,70 +219,43 @@ export class MangalibAPI {
       // File does not exist, proceed
     }
 
-    const response = await this.fetchWithRetry(imageUrl, {
-      headers: IMAGE_HEADERS,
-    });
+    let lastError = null;
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} for image ${imageUrl}`);
-    }
+    // Try candidate image hosts with automatic failover
+    for (let i = 0; i < this.imageHosts.length; i++) {
+      const hostIdx = (this.currentHostIndex + i) % this.imageHosts.length;
+      const host = this.imageHosts[hostIdx];
+      const imageUrl = `${host}${rawPath}`;
 
-    const buffer = Buffer.from(await response.arrayBuffer());
-
-    if (buffer.length === 0) {
-      throw new Error(`Empty image buffer for page ${page.slug}`);
-    }
-
-    await fs.writeFile(filePath, buffer);
-    print(`  Saved page ${page.slug}`, "info");
-
-    return filePath;
-  }
-
-  // Helpers
-
-  buildChapterFolderName(volume, number, name) {
-    let folderName = `Volume ${volume} Chapter ${number}`;
-    if (name && name.trim()) {
-      folderName += ` ${name.trim()}`;
-    }
-    return folderName;
-  }
-
-  sanitizeFolderName(name) {
-    const sanitized = String(name)
-      .replace(/[<>:"/\\|?*]/g, "_")
-      .trim()
-      .replace(/[. ]+$/g, "");
-
-    return sanitized || "_";
-  }
-
-  async createChapterDirectory(mangaTitle, chapterName) {
-    const dir = path.join(
-      this.baseDownloadPath,
-      this.sanitizeFolderName(mangaTitle),
-      this.sanitizeFolderName(chapterName)
-    );
-    await fs.mkdir(dir, { recursive: true });
-    return dir;
-  }
-
-  async fetchWithRetry(url, options = {}) {
-    let lastError;
-
-    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
-        const response = await fetch(url, options);
-        if (!response.ok && response.status !== 404) {
-          throw new Error(`HTTP ${response.status}: ${url}`);
+        const response = await this.fetchWithRetry(imageUrl, {
+          headers: IMAGE_HEADERS,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} for image ${imageUrl}`);
         }
-        return response;
-      } catch (error) {
-        lastError = error;
-        if (attempt < this.maxRetries) {
-          await sleep(this.retryDelay);
+
+        const buffer = Buffer.from(await response.arrayBuffer());
+
+        if (buffer.length === 0) {
+          throw new Error(
+            `Empty image buffer for page ${page.slug} from ${host}`
+          );
         }
+
+        await fs.writeFile(filePath, buffer);
+        print(`  Saved page ${page.slug}`, "info");
+
+        // Remember working host as primary to avoid failing attempts on next pages
+        if (this.currentHostIndex !== hostIdx) {
+          this.currentHostIndex = hostIdx;
+        }
+
+        return filePath;
+      } catch (err) {
+        lastError = err;
+        // Host failed, continue loop to try next candidate host
       }
     }
 

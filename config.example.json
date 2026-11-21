@@ -4,7 +4,7 @@
   },
   "api": {
     "baseUrl": "https://api.cdnlibs.org/api",
-    "imageBaseUrl": "https://img3.mixlib.me",
+    "imageBaseUrl": "https://img2.mixlib.me",
     "referer": "https://mangalib.me/",
     "timeZone": "Europe/Kiev",
     "siteId": 1,
@@ -40,10 +40,22 @@
       "branch": 1,
       "scan": true,
       "skipDownloaded": true
+    },
+    {
+      "name": "Ты была не моей сестрой, а моей невестой?!",
+      "url": "https://1.seimanga.me/ty_byla_ne_moei_sestroi__a_moei_nevestoi__",
+      "scan": true,
+      "skipDownloaded": true
+    },
+    {
+      "name": "Необъятные небеса",
+      "url": "https://a.zazaza.me/neobiatnye_nebesa",
+      "scan": true,
+      "skipDownloaded": true
     }
   ],
   "_comments": {
-    "branch": "Which translation to download. Use a number (1 = first, 2 = second, ...) or a team slug string (e.g. 'micromanga'). Defaults to 1.",
+    "branch": "Which translation to download (Mangalib). Use a number (1 = first, 2 = second, ...) or a team slug string (e.g. 'micromanga'). Defaults to 1.",
     "scan": "Set to false once a manga series is finished AND fully downloaded to skip the chapter-list API call on every run. Defaults to true.",
     "skipDownloaded": "Skip chapters already marked as downloaded in the database."
   }
